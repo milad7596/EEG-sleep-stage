@@ -1,0 +1,74 @@
+%% read all files Fpz-Cz
+clc;
+clear all;
+
+sbj_EEGs_Fpz_Cz.W  =  [];
+sbj_EEGs_Fpz_Cz.R  =  [];
+sbj_EEGs_Fpz_Cz.S1 =  [];
+sbj_EEGs_Fpz_Cz.S2 =  [];
+sbj_EEGs_Fpz_Cz.S3 =  [];
+sbj_EEGs_Fpz_Cz.S4 =  [];
+
+
+% for each subject
+list_edf = dir("*.edf");
+
+for sbj = 1:2:length(list_edf)
+    sample_001 = list_edf(sbj).name;  % "SC4001E0-PSG.edf";
+    sample_001_hy = list_edf(sbj+1).name;  % "SC4001EC-Hypnogram.edf";
+    
+    data_main = edfread(sample_001);
+    info = edfinfo(sample_001);
+    
+    info_header = edfinfo(sample_001_hy);
+    
+    header_time = info_header.Annotations;
+    
+    annotation = header_time.Annotations;
+    classes = unique(annotation);
+
+    [row, col] = size(header_time);
+    
+    % reading samples of ith subject
+    for i = 1:row-2
+    
+        k=time2num(header_time.Onset(i)/30)+1;
+        j=time2num(header_time.Onset(i+1)/30)+1;
+        a=data_main.EEGFpz_Cz(k:j);
+       
+        
+
+        % annotation(i);
+
+           % annotation(i); Fpz_Cz  // Pz_Oz
+     
+         if annotation(i) == "Sleep stage W"
+            sbj_EEGs_Fpz_Cz.W= [sbj_EEGs_Fpz_Cz.W ; a];
+           
+
+        elseif annotation(i) == "Sleep stage R"
+            sbj_EEGs_Fpz_Cz.R = [sbj_EEGs_Fpz_Cz.R; a];
+           
+        elseif annotation(i) == "Sleep stage 1"
+            sbj_EEGs_Fpz_Cz.S1 = [sbj_EEGs_Fpz_Cz.S1; a];
+         
+
+        elseif annotation(i) == "Sleep stage 2"
+            sbj_EEGs_Fpz_Cz.S2 = [sbj_EEGs_Fpz_Cz.S2; a];
+          
+
+            
+        elseif annotation(i) == "Sleep stage 3"
+            sbj_EEGs_Fpz_Cz.S3 = [sbj_EEGs_Fpz_Cz.S3; a];
+          
+
+        elseif annotation(i) == "Sleep stage 4"        
+             sbj_EEGs_Fpz_Cz.S4 = [ sbj_EEGs_Fpz_Cz.S4; a];  
+            
+         end
+    end
+end
+
+
+
+ 
